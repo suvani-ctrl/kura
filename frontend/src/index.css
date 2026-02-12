@@ -21,6 +21,6 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(88, 204, 237, 0.45);
+  background-color: rgba(139, 92, 246, 0.5);
   border-radius: 999px;
 }

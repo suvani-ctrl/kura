@@ -7,7 +7,7 @@ export const ENV = {
   NODE_ENV: process.env.NODE_ENV || "development",
 
   // database + auth
-  MONGO_URI: process.env.MONGO_URI,
+  MONGO_URI: "mongodb+srv://suvani:suvaniisokay@cluster0.8lxzm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
   JWT_SECRET: process.env.JWT_SECRET,
 
   // email / resend

@@ -3,16 +3,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        "dirty-blue-900": "#010f28ff", 
-        "dirty-blue-850": "#011b37ff",
-        "dirty-blue-800": "#002751ff",
-        "dirty-blue-700": "#002d5b56",
-        "dirty-blue-600": "#163d64ff",
-        "dirty-blue-500": "#00424bff",
-        "dirty-blue-400": "#0e3647ff",
-        "dirty-blue-300": "#393c3dff",
-        "dirty-blue-200": "#023141ff",
-        "dirty-blue-100": "#DFF6FF"
+        "dirty-blue-900": "#09090b", // Zinc 950 - Pitch Black/Deepest
+        "dirty-blue-850": "#18181b", // Zinc 900 - Panels
+        "dirty-blue-800": "#27272a", // Zinc 800 - Borders/Separators
+        "dirty-blue-700": "#3f3f46", // Zinc 700
+        "dirty-blue-600": "#7c3aed", // Violet 600 - Primary Brand (High Contrast)
+        "dirty-blue-500": "#8b5cf6", // Violet 500 - Hover
+        "dirty-blue-400": "#a78bfa", // Violet 400
+        "dirty-blue-300": "#c4b5fd", // Violet 300 - Accents
+        "dirty-blue-200": "#ddd6fe", // Violet 200
+        "dirty-blue-100": "#ede9fe"  // Violet 100
       }
     }
   },

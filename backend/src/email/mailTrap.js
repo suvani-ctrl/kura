@@ -39,7 +39,6 @@ const sendWelcomeEmail = async(email,fullname) =>{
 }
 
 export const sendEmailforForgotPassword = async(email,resetURL) =>{
-    try{
         const info = await transport.sendMail({
             from:sender,
             to:email,
@@ -47,11 +46,20 @@ export const sendEmailforForgotPassword = async(email,resetURL) =>{
             html: forgotPasswordTemplate(resetURL)
         });
         console.log("email sent to forgot password")
-    }catch(error)
-    {
-        console.error("email sent failed for forgoten password",error)
-    }
+
+        
 }
 
-export default sendWelcomeEmail
+export const sendEmailForResetPassword  = async(email,resetUrl) =>{
+    const info = await transport.sendMail({
+        from:sender,
+        to:email,
+        subject: "Hello from my Messanger Team",
+        text: `Hi Here is your link for Password Reset`,
+        html:forgotPasswordTemplate(resetUrl)
+    });
+    console.log("Email sent to reset password!")
+}
+
+export default sendWelcomeEmail;
 

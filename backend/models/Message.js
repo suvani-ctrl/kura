@@ -18,6 +18,9 @@ const messageSchema = new mongoose.Schema({
     image:{
         type:String,
     },
+    file:{
+        type:String,
+    },
     isRead: { type: Boolean, default: false },
     deleted: { type: Boolean, default: false },
     chatRoomId: {

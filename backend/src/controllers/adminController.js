@@ -21,7 +21,6 @@ export const adminSignin = async (req, res) => {
             process.env.JWT_SECRET_ADMIN,
             { expiresIn: "1h" }
         );
-        // sending the token as a cookie
         res.cookie("token", token, {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production", // only HTTPS in prod

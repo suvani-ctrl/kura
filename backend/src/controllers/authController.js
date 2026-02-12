@@ -3,8 +3,7 @@ import bcrypt from "bcrypt";
 import zxcvbn from "zxcvbn";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-
-import sendWelcomeEmail, { sendEmailforForgotPassword } from "../email/mailTrap.js";
+import sendWelcomeEmail, { sendEmailforForgotPassword, sendEmailForResetPassword } from "../email/mailTrap.js";
 import cloudinary from "../lib/cloudinary.js";
 import isPwned from "../lib/security.js";
 import Token from "../../models/Token.js";
@@ -37,7 +36,11 @@ const signSessionToken = (payload) => {
 export const signup = async (req, res) => {
     try {
         const { email, password, username, profilePic } = req.body;
-
+        if (email.length > 255 || username.length > 32){
+            return res.status(400).json({
+                message: "Email length"
+            })
+        }
         if (!email || !username || !password) {
             return res.status(400).json({ message: "Missing required fields" });
         }
@@ -153,33 +156,37 @@ export const login = async (req, res) => {
 // ---------------------- FORGOT PASSWORD -------------------------------------
 
 export const forgotPassword = async (req, res) => {
+    const { email,username } = req.body;
     try {
-        const { email, username } = req.body;
-
+        if (!email && !username){
+            return res.status(400).json({
+                message: "Not enough credentials"
+            })
+        }
         const user = await User.findOne({
             $or: [{ email }, { username }]
         });
 
         if (!user) {
             return res.status(202).json({
-                message: "If the account exists, a reset link has been sent"
+                message: "If the account exists, a reset link will be sent"
             });
         }
 
         // Generate secure token
         const resetToken = crypto.randomBytes(32).toString("hex");
-
         await Token.deleteOne({ userId: user._id });
-
         await Token.create({ userId: user._id, token: resetToken });
 
         const baseUrl = ENV.CLIENT_URL || "http://localhost:5173";
         const resetURL = `${baseUrl}/reset-password?token=${resetToken}&userId=${user._id}`;
-        await sendEmailforForgotPassword(user.email, resetURL);
 
-        return res.status(202).json({
-            message: "If the account exists, a reset link has been sent"
-        });
+        await sendEmailforForgotPassword(user.email, resetURL);
+        
+        return res.status(200).json({
+            success: true,
+            message: "Password Reset Link has been sent"
+        })
 
     } catch (error) {
         console.error(error);
@@ -191,38 +198,69 @@ export const forgotPassword = async (req, res) => {
 // ---------------------- RESET PASSWORD -------------------------------------
 
 export const passwordReset = async (req, res) => {
-    try {
-        const { token, userId, newPassword } = req.body;
-
-        if (!token || !userId || !newPassword) {
-            return res.status(400).json({ message: "Missing required information" });
+    const {token,userId} = req.body;
+    console.log(token);
+    console.log(userId);
+    console.log(req.query);
+    try{
+        if(!token || !userId){
+            return res.status(404).json({
+            success:false,
+            message:"Token not found"
+        })
+        }else{
+        const check_token = await Token.findOne({
+            $and:[
+                {token:token},
+                {userId: userId}
+            ]})
+        if(!check_token){
+            return res.status(404).send({
+                success:false,
+                message: "Invalid Token"
+            })
         }
-
-        const tokenDoc = await Token.findOne({ token, userId });
-        if (!tokenDoc) {
-            return res.status(401).json({ message: "Invalid or expired token" });
-        }
-
-        const hashedPassword = req.hashedPassword || await bcrypt.hash(newPassword, 10);
-
-        const user = await User.findByIdAndUpdate(
-            userId,
-            { password: hashedPassword },
-            { new: true }
-        );
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        await Token.deleteOne({ _id: tokenDoc._id });
-
-        return res.status(200).json({ message: "Password reset successful" });
-
-    } catch (error) {
-        console.error("Password reset error:", error);
-        return res.status(500).json({ message: "Server error" });
     }
+    const {newPassword} = req.body;
+        if(!newPassword){
+            return res.status(404).send("Please insert a valid password");
+        }
+       // Password rules
+        if (newPassword.length < 10) {
+            return res.status(400).json({ message: "Password must be at least 10 characters" });
+        }
+
+        const strength = zxcvbn(newPassword);
+        if (strength.score < 3) {
+            return res.status(400).json({
+                message: "Password is too weak",
+                suggestions: strength.feedback.suggestions
+            });
+        }
+        if (await isPwned(newPassword)) {
+            return res.status(400).json({ message: "Password found in data breaches" });
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const update_password = await User.findByIdAndUpdate(
+            userId,{
+                password: hashedPassword
+            }
+        )
+        await Token.deleteOne({userId})
+        {
+            return res.status(200).json({
+                success:true,
+                message: "Password reset done"
+            })
+        }
+}  catch(error){
+    return res.status(500).json({
+        success: false,
+        message: "Internal server error ! cant change the password"
+    })
+    console.error(error)
+}
+
 };
 
 
@@ -236,7 +274,6 @@ export const updateProfile = async (req, res) => {
     if (!profilePic) {
       return res.status(400).json({ message: "No image uploaded" });
     }
-
     const result = await cloudinary.uploader.upload(profilePic, {
       resource_type: "auto"
     });

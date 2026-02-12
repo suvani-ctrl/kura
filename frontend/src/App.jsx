@@ -21,7 +21,7 @@ const App = () => {
   if (isCheckingAuth) return <GlobalLoadingScreen />;
 
   return (
-    <div data-theme="nord" className="min-h-screen w-full bg-dirty-blue-900">
+    <div data-theme="dark" className="min-h-screen w-full bg-dirty-blue-900">
       <Routes>
         <Route
           path="/"

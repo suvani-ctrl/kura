@@ -13,7 +13,7 @@ router.post("/signup", validateSignup, signup);
 router.post("/login",login); // REMOVED securityRoute middleware
 router.post("/logout",logout);
 router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", checkPasswordSecurity, passwordReset);
+router.post("/reset-password", passwordReset,checkPasswordSecurity);
 router.post("/signin/admin", validatingAdmin, adminSignin);
 
 // PROTECTED ROUTES - AUTHENTICATION REQUIRED
@@ -23,7 +23,7 @@ router.get("/verify-token",securityRoute,(req,res) =>{
         user: req.user
     })
 })
-router.get("/check", securityRoute, checkAuth); // Import and use checkAuth from controller
+router.get("/check", securityRoute, checkAuth);
 router.put("/update-profile", securityRoute, updateProfile);
 
 export default router;

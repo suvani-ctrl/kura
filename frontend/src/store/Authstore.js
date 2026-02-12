@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { socket } from "../socket/socket";
 import { registerSocketListeners } from "../socket/listeners";
 
-export const useauthStore = create((set) => ({
+export const useauthStore = create((set,get) => ({
   authUser: null,
   isCheckingAuth: true,
   isSigningUp: false,
@@ -17,6 +17,7 @@ export const useauthStore = create((set) => ({
       const res = await axiosInstance.post("/auth/signup", data);
       set({ authUser: res.data.user });
       toast.success("Account created");
+     
     } catch (err) {
       toast.error(err?.response?.data?.message || "Signup failed");
       set({ authUser: null });
@@ -30,13 +31,13 @@ export const useauthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data.user });
-      set({ authUser: res.data.user });
+      const {authUser} = get()
       setTimeout(() => {
       socket.connect();
       registerSocketListeners();
 }, 50);
-
       toast.success("Logged in");
+      console.log("auth user id:", authUser._id);
     } catch (err) {
       toast.error(err?.response?.data?.message || "Login failed");
       set({ authUser: null });
@@ -54,8 +55,6 @@ export const useauthStore = create((set) => ({
       socket.connect();
       registerSocketListeners();
 }, 50);
-
-
     } catch (err) {
       set({ authUser: null });
     } finally {

@@ -1,24 +1,22 @@
 const keywordSound = [
-new Audio("/keystroke1.mp3"),
-new Audio("/keystroke2.mp3"),
-new Audio("/stroke3.mp3"),
-new Audio("/keystroke4.mp3"),
-]
-function useRandomSounds() {
+    "/keystroke1.mp3",
+    "/keystroke2.mp3",
+    "/keystroke3.mp3",
+    "/keystroke4.mp3"
+];
 
-    const playRandomKeyStrokeSound = () =>{
-        const randomSound = keywordSound[
-            Math.floor(
-                Math.random()
-                * keywordSound.length
-            )
-        ]
-        randomSound.currentTime = 0;
-        randomSound.play().catch((error) =>{
-            console.log("Sound Play error", error)
-        })
-    };
+function useRandomSounds() {
+const playRandomKeyStrokeSound  = () =>{
+    const randomPath = keywordSound[
+        Math.floor(Math.random() * keywordSound.length)
+    ];
+
+    const audio = new Audio(randomPath);
+    audio.play().catch((error) =>{
+        console.warn('Sound Play Error', error);
+    });
+}
     return {playRandomKeyStrokeSound};
 }
 
-export default useRandomSounds
+export default useRandomSounds;

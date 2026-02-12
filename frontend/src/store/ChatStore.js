@@ -79,53 +79,110 @@ export const chatStore = create((set, get) => ({
         }
     },
 
-    sendMessage: async (messageData) => {
-    const { messages, selectedUser } = get();
-    const { authUser } = useauthStore.getState();
+   sendMessage: async(messageData) => {
+    const {messages, selectedUser} = get();
+    const {authUser} = useauthStore.getState();
 
-    if (!selectedUser?._id) {
-        toast.error("No user selected");
+    if(!authUser?._id){
+        toast.error("You must be logged in");
         return;
     }
 
+    if(!selectedUser?._id){
+        toast.error("No user selected");
+        return;
+    }
+    
     const temp_id = `temp-${Date.now()}`;
+    
+    // ✅ Check if attachment exists (can be File object or base64 string)
+    const hasAttachment = !!messageData.attachment;
+    const isAttachmentObject = hasAttachment && typeof messageData.attachment === "object" && messageData.attachment.rawFile;
+    const isAttachmentString = hasAttachment && typeof messageData.attachment === "string";
+    
+    // Determine if it's an image
+    let isImage = false;
+    let fileToUpload = null;
+    
+    if (isAttachmentObject) {
+        // File object from file input
+        fileToUpload = messageData.attachment.rawFile;
+        isImage = fileToUpload.type?.startsWith('image/');
+    } else if (isAttachmentString) {
+        // Base64 string from image input or camera
+        // Convert base64 to Blob/File
+        try {
+            const base64Data = messageData.attachment;
+            const response = await fetch(base64Data);
+            const blob = await response.blob();
+            
+            // Create a File from the blob
+            const fileName = `image-${Date.now()}.jpg`;
+            fileToUpload = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+            isImage = true; // Base64 strings are always images in this app
+        } catch (err) {
+            console.error("Failed to convert base64 to file:", err);
+            toast.error("Failed to process image");
+            return;
+        }
+    }
+    
     const optimisticMessage = {
-    _id: temp_id,
-    senderId: authUser._id,
-    receiverId: selectedUser._id,
-    text: messageData.text || "",
-    image: messageData.image || null,
-    createdAt: new Date().toISOString(),
-    optimistic: true
-};
-
-
-    // Add optimistic message to UI immediately
-    set({ messages: [...messages, optimisticMessage] });
-
+        _id: temp_id,
+        senderId: authUser._id,
+        receiverId: selectedUser._id,
+        text: messageData.text || "",
+        image: isImage ? "uploading..." : null,
+        file: hasAttachment && !isImage ? "uploading..." : null,
+        createdAt: new Date().toISOString(),
+    };
+    
+    set({messages: [...messages, optimisticMessage]});
+    
     try {
-        const response = await axiosInstance.post(
-            `/messages/send/${selectedUser._id}`,
-            messageData
-        );
-
+        let response;
+        
+        if(hasAttachment && fileToUpload) {
+            console.log('Uploading file:', {
+                name: fileToUpload.name,
+                type: fileToUpload.type,
+                size: fileToUpload.size,
+                isImage: isImage
+            });
+            
+            const formData = new FormData();
+            formData.append('text', messageData.text || '');
+            formData.append('file', fileToUpload);
+            
+            response = await axiosInstance.post(
+                `/messages/send/${selectedUser._id}`,
+                formData,
+                {
+                    headers: {'Content-Type': 'multipart/form-data'}
+                }
+            );
+        } else {
+            response = await axiosInstance.post(
+                `/messages/send/${selectedUser._id}`,
+                {
+                    text: messageData.text
+                }
+            ); 
+        }
+        
         const realMessage = response.data;
-
-        // Replace the optimistic message with real one
+        
         set({
             messages: get().messages.map((msg) =>
                 msg._id === temp_id ? realMessage : msg
-            ),
+            ) 
         });
-
     } catch (error) {
-        // Remove optimistic message if send failed
         set({
-            messages: get().messages.filter((msg) => msg._id !== temp_id),
+            messages: get().messages.filter((msg) => msg._id !== temp_id)
         });
-
         toast.error(error.response?.data?.message || "Failed to send message");
     }
-},
+}
 
 }));

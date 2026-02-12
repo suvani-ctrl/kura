@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { ENV } from "./env.js";
-
 let isConnected = false;
 
 export const connectDB = async () => {
