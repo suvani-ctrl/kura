@@ -1,114 +1,20 @@
 import User from "../../models/User.js";
 import bcrypt from "bcrypt";
 import zxcvbn from "zxcvbn";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import sendWelcomeEmail, { sendEmailforForgotPassword, sendEmailForResetPassword } from "../email/mailTrap.js";
 import cloudinary from "../lib/cloudinary.js";
 import isPwned from "../lib/security.js";
 import Token from "../../models/Token.js";
 import { ENV } from "../lib/env.js";
-
-const ONE_HOUR_MS = 60 * 60 * 1000;
-const TOKEN_EXPIRY = "1h";
-
-const authCookieBaseOptions = {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax"
-};
-
-const authCookieOptions = {
-    ...authCookieBaseOptions,
-    maxAge: ONE_HOUR_MS
-};
-
-const signSessionToken = (payload) => {
-    if (!ENV.JWT_SECRET) {
-        throw new Error("JWT_SECRET is undefined. Check your env configuration.");
-    }
-
-    return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
-};
+import { generateToken,verifyToken,authCookieOptions } from "../utils/jwt.util.js";
+import { validateandHashPassword } from "../utils/password.util.js";
+import { comparePassword } from "../utils/comparePassword.js";
+import { cleanEmail, emailChecker } from "../utils/email.check.js";
+import { emailExists } from "../repositories/email.repo.js";
 
 // ---------------------- SIGNUP -------------------------------------
 
-export const signup = async (req, res) => {
-    try {
-        const { email, password, username, profilePic } = req.body;
-        if (email.length > 255 || username.length > 32){
-            return res.status(400).json({
-                message: "Email length"
-            })
-        }
-        if (!email || !username || !password) {
-            return res.status(400).json({ message: "Missing required fields" });
-        }
-
-        // Email validation
-        const cleanEmail = email.trim().toLowerCase();
-        const cleanUser = username.trim();
-        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-        if (!regex.test(cleanEmail)) {
-            return res.status(400).json({ message: "Invalid email format" });
-        }
-
-        const existingUser = await User.findOne({ email: cleanEmail });
-        if (existingUser) {
-            return res.status(409).json({ message: "Email already exists" });
-        }
-
-        // Password rules
-        if (password.length < 10) {
-            return res.status(400).json({ message: "Password must be at least 10 characters" });
-        }
-
-        const strength = zxcvbn(password);
-        if (strength.score < 3) {
-            return res.status(400).json({
-                message: "Password is too weak",
-                suggestions: strength.feedback.suggestions
-            });
-        }
-
-        if (await isPwned(password)) {
-            return res.status(400).json({ message: "Password found in data breaches" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await User.create({
-            email: cleanEmail,
-            password: hashedPassword,
-            username: cleanUser,
-            profilePic
-        });
-
-        // Generate token
-        const token = signSessionToken({ userId: newUser._id, role: newUser.role });
-
-        try {
-            await sendWelcomeEmail(newUser.email, newUser.username);
-        } catch (e) {
-            console.error("Email sending failed:", e);
-        }
-
-        res.cookie("token", token, authCookieOptions);
-
-        return res.status(201).json({
-            user: {
-                _id: newUser._id,
-                username: newUser.username,
-                email: newUser.email
-            }
-        });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Server error" });
-    }
-};
 
 
 // ---------------------- LOGIN -------------------------------------
@@ -129,12 +35,13 @@ export const login = async (req, res) => {
             return res.status(401).json({ loggedin: false, message: "User not found" });
         }
 
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) {
+        const validPassword = comparePassword();
+      
+         if (!validPassword) {
             return res.status(401).json({ loggedin: false, message: "Invalid credentials" });
         }
 
-        const token = signSessionToken({ userId: user._id, role: user.role });
+        const token = generateToken({ userId: user._id, role: user.role });
 
         res.cookie("token", token, authCookieOptions);
 
@@ -203,6 +110,7 @@ export const passwordReset = async (req, res) => {
     console.log(userId);
     console.log(req.query);
     try{
+
         if(!token || !userId){
             return res.status(404).json({
             success:false,
@@ -224,26 +132,13 @@ export const passwordReset = async (req, res) => {
     const {newPassword} = req.body;
         if(!newPassword){
             return res.status(404).send("Please insert a valid password");
+        }else{
+            const new_pass = makePassword(newPassword);
         }
-       // Password rules
-        if (newPassword.length < 10) {
-            return res.status(400).json({ message: "Password must be at least 10 characters" });
-        }
-
-        const strength = zxcvbn(newPassword);
-        if (strength.score < 3) {
-            return res.status(400).json({
-                message: "Password is too weak",
-                suggestions: strength.feedback.suggestions
-            });
-        }
-        if (await isPwned(newPassword)) {
-            return res.status(400).json({ message: "Password found in data breaches" });
-        }
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+       
         const update_password = await User.findByIdAndUpdate(
             userId,{
-                password: hashedPassword
+                password: new_pass
             }
         )
         await Token.deleteOne({userId})
@@ -312,7 +207,7 @@ export const checkAuth = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        const decoded = jwt.verify(token, ENV.JWT_SECRET);
+        const decoded = verifyToken(token);
 
         const user = await User.findById(decoded.userId).select("-password");
         if (!user) {

@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import { ENV } from '../lib/env.js';
+import { ENV } from "../lib/env.js";
+import jwt from "jsonwebtoken";
 
 const TOKEN_EXPIRY = '1h';
 const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -19,5 +19,13 @@ export const generateToken = (payload) => {
 };
 
 export const verifyToken = (token) => {
-    return jwt.verify(token, ENV.JWT_SECRET);
+    
+    try {
+        const decoded = jwt.verify(token,ENV.JWT_SECRET);
+        return decoded;
+    } catch (error) {
+        throw error;
+    }
+    
+    
 };

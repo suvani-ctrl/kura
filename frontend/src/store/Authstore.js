@@ -32,6 +32,7 @@ export const useauthStore = create((set,get) => ({
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data.user });
       const {authUser} = get()
+      console.log("auth user id:", authUser._id);
       setTimeout(() => {
       socket.connect();
       registerSocketListeners();

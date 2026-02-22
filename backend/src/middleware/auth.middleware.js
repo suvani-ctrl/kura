@@ -5,7 +5,6 @@ import { ENV } from "../lib/env.js";
 const securityRoute = async (req, res, next) => {
     try {
         const token = req.cookies?.token;
-
         console.log(token)
         if (!token) {
             return res.status(401).json({
@@ -15,7 +14,7 @@ const securityRoute = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, ENV.JWT_SECRET);
-        
+        console.log("Decoded payload :",decoded);
         if (!decoded) {
             return res.status(401).json({
                 message: "Unauthorized - Invalid token"
@@ -31,6 +30,7 @@ const securityRoute = async (req, res, next) => {
         }
         
         req.user = user;
+        console.log("User for debug:", req.user)
         next();
         
     } catch (error) {
