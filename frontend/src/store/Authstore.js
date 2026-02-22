@@ -32,7 +32,7 @@ export const useauthStore = create((set,get) => ({
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data.user });
       const {authUser} = get()
-      console.log("auth user id:", authUser._id);
+      console.log("auth user is:", authUser);
       setTimeout(() => {
       socket.connect();
       registerSocketListeners();
@@ -96,8 +96,6 @@ export const useauthStore = create((set,get) => ({
   set({ isUpdatingProfile: true });
   try {
     const response = await axiosInstance.put("/auth/update-profile", { profilePic });
-    
-    // Immediately fetch fresh user data
     const checkResponse = await axiosInstance.get("/auth/check");
     set({ 
       authUser: checkResponse.data.user,

@@ -13,6 +13,7 @@ export const login = async (req, res) => {
         if(user){
         res.status(200).json({
             message: "Login Success",
+            user:user
         })
     }
     

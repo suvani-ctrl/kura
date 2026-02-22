@@ -1,7 +1,8 @@
+import { authCookieOptions } from "../../utils/jwt.util.js";
 
 export const logout = async (req, res) => {
     try {
-        res.clearCookie("token", authCookieBaseOptions);
+        res.clearCookie("token", authCookieOptions);
         
         return res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
