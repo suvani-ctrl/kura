@@ -16,13 +16,29 @@ describe("authCookieOptionFunction", () =>{
     })
 })
 
+vi.mock("jsonwebtoken");
+
 describe("generateToken", () =>{
         it("The jwt secret should not be empty or undefined", () =>{
-            expect(generateToken.)
+            const payload = {id: "123"};
+            jwt.sign.mockReturnValue("suvani_secret_token");
+
+            const result = generateToken(payload);
+            expect(result).toBe("suvani_secret_token");
+
+            expect(jwt.sign).toHaveBeenCalled();
         })
 })
 
 
 describe("verifyToken", () =>{
+
+    it("It should check the token and verify it", () =>{
+         const token = "super_secret_token";
+         const decodedPayload = {userId: "123"};
+         jwt.verify.mockReturnValue(decodedPayload);
+         const result = verifyToken(token);
+         expect(result).toEqual(decodedPayload);
+    })
 
 })
