@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import zxcvbn from "zxcvbn";
 import isPwned from "../lib/security.js";
 
-
 export const validateAndHashPassword = async (password) =>{
 
 if (password.length < 10) {
