@@ -18,7 +18,11 @@ describe("authCookieOptionFunction", () =>{
 
 describe("generateToken", () =>{
         it("The jwt secret should not be empty or undefined", () =>{
-            expect(generateToken.)
+            const payload = {id: "123"};
+            jwt.sign.mockReturnValue("fake_token_123");
+            const result = generateToken(payload);
+            expect(result).toBe("fake_token_123");
+            expect(jwt.sign).toHaveBeenCalled();
         })
 })
 
