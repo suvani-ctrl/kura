@@ -1,6 +1,7 @@
-import {describe,it,expect} from "vitest";
-import {authCookieOptions,generateToken,verifyToken} from "../jwt.util.js";
 
+import {vi,describe,it,expect} from "vitest";
+import {authCookieOptions,generateToken,verifyToken} from "../jwt.util.js";
+import jwt from "jsonwebtoken";
 describe("authCookieOptionFunction", () =>{
     it("It should have token expiry of 1 hour ", () =>{
         expect(authCookieOptions.maxAge).toBe(60 * 60 * 1000);
