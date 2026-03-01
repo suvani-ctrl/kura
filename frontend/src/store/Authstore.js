@@ -15,7 +15,7 @@ export const useauthStore = create((set,get) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res.data.user });
+      set({ authUser: res.data.user,authToken: res.data.token });
       toast.success("Account created");
      
     } catch (err) {
@@ -31,6 +31,7 @@ export const useauthStore = create((set,get) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data.user });
+      set({authUser: res.data.user,authToken: res.data.token})
       const {authUser} = get()
       console.log("auth user is:", authUser);
       setTimeout(() => {

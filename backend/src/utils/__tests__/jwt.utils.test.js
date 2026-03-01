@@ -1,7 +1,10 @@
-
-import {vi,describe,it,expect} from "vitest";
-import {authCookieOptions,generateToken,verifyToken} from "../jwt.util.js";
+import { vi,describe,it,expect} from "vitest";
+import {generateToken, verifyToken} from '../jwt.util.js';
 import jwt from "jsonwebtoken";
+
+
+vi.mock("jsonwebtoken");
+
 describe("authCookieOptionFunction", () =>{
     it("It should have token expiry of 1 hour ", () =>{
         expect(authCookieOptions.maxAge).toBe(60 * 60 * 1000);
@@ -17,29 +20,37 @@ describe("authCookieOptionFunction", () =>{
     })
 })
 
-vi.mock("jsonwebtoken");
+describe("Generate Jwt Token", () =>{
 
-describe("generateToken", () =>{
-        it("The jwt secret should not be empty or undefined", () =>{
-            const payload = {id: "123"};
-            jwt.sign.mockReturnValue("suvani_secret_token");
-
-            const result = generateToken(payload);
-            expect(result).toBe("suvani_secret_token");
-
-            expect(jwt.sign).toHaveBeenCalled();
-        })
-})
-
-
-describe("verifyToken", () =>{
-
-    it("It should check the token and verify it", () =>{
-         const token = "super_secret_token";
-         const decodedPayload = {userId: "123"};
-         jwt.verify.mockReturnValue(decodedPayload);
-         const result = verifyToken(token);
-         expect(result).toEqual(decodedPayload);
+    it("should return a jwt token  created using the payload and jwt secret",() =>{
+        const token = generateToken({userId: "1233"});
+        const parts = token.split(".");
+        expect(parts.length).toBe(3);
     })
+
+
+    it("The jwt secret shouldnt be undefined",()=>{
+
+        const payload = {id: "suvani"};
+
+        jwt.sign.mockReturnValue("S3CR3T_TOK3N");
+
+         const result = generateToken(payload);
+         expect(result).toBe("S3CR3T_TOK3N");
+
+         expect(jwt.sign).toHaveBeenCalled();
+    });
+
+    it("It should return a boolean",() =>{
+        
+        const token = "S3CR3T_TOK3N";
+
+        jwt.verify.mockReturnValue("S3CR3T_TOK3N");
+
+        const result = verifyToken(token);
+        expect(result).toBe("S3CR3T_TOK3N");
+
+        expect(verify).toHaveBeenCalled()
+    });
 
 })

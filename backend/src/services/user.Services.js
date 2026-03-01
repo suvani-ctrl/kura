@@ -4,6 +4,7 @@ import { cleanEmail } from "../utils/email.util.js";
 import { emailExists } from "../repositories/email.repo.js";
 import { isValidEmail } from "../utils/email.util.js";
 import sendWelcomeEmail from "../email/mailTrap.js";
+import { generateToken } from "../utils/jwt.util.js";
 
 export const registerUser = async(userData) =>{
       try {
@@ -15,11 +16,13 @@ export const registerUser = async(userData) =>{
             }
     
             const clean_user = username.trim();
-            const clean_email = cleanEmail(email);       
+            const clean_email = cleanEmail(email); 
+
             if(!isValidEmail(clean_email)){
                 throw new Error("Email field error");
                 
             } 
+            
             const existingEmail = await emailExists(clean_email);
     
             if(existingEmail){
@@ -40,13 +43,24 @@ export const registerUser = async(userData) =>{
             } catch (error) {
                 console.error("Email sending failed:", error);
             }
-            return ({
+
+            const jwtToken = generateToken({userId: newUser._id, role: newUser.role });
+            
+            const data = ({
                 user: {
-                    _id: newUser._id,
+                    _id: newUser.id,
                     username: newUser.username,
-                    email: newUser.email
+                    email: newUser.email 
                 }
-            });
+            })
+
+            return (
+                {
+                    ...data,
+                    token:jwtToken
+                }
+                
+            )
     
         } catch (error) {
             console.error(error);
