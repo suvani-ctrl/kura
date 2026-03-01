@@ -13,6 +13,7 @@ import { updateProfile } from "../controllers/Authentication/updateProfile.js";
 import { logout } from "../controllers/Authentication/logout.js";
 import { checkAuth } from "../controllers/Authentication/checkAuth.js"; // Spell check: checkkAuth (Double k!)
 // import { refreshToken } from "../controllers/Authentication/refreshToken.js";
+
 const router = express.Router();
 
 // PUBLIC ROUTES - NO AUTHENTICATION REQUIRED
