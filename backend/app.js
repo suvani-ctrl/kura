@@ -37,10 +37,10 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static("public")); 
 app.use(cookieParser()); 
 
-app.use("/api/auth", authRoute);
+app.use("/api/v1/auth", authRoute);
 
 
-app.use("/api/messages", messageRoute);
+app.use("/api/v1/messages", messageRoute);
 
 const startServer = async () => {
     try {

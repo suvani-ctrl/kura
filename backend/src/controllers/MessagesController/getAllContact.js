@@ -1,8 +1,8 @@
-import { getAllContactsController } from "../../repositories/Message.repo.js"
+import { getallContacts_ } from "../../repositories/Message.repo.js"
 
 export const getAllContactsController = async(req,res) =>{
     try {
-        const allContacts = await getAllContactsController(req.user.id);
+        const allContacts = await getallContacts_(req.user.id);
         res.status(200).json(allContacts);
     } catch (error) {
         console.error(error);
