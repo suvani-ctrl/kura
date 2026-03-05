@@ -47,14 +47,11 @@ const startServer = async () => {
         await connectDB(); 
         console.log('Database connected successfully.');
 
-        // Create HTTP server from Express app
         const server = http.createServer(app);
 
-        // Initialize Socket.IO server
         initializeSocketServer(server);
         console.log('Socket.IO server initialized.');
 
-        // Start the server
         server.listen(PORT, () => {
             console.log(`Server running successfully on port ${PORT}`);
             console.log(`Socket.IO server is available on the same port ${PORT}`);

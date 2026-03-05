@@ -15,9 +15,13 @@ export const login = async (req, res) => {
             message: "Login Success",
             user:user
         })
-    }
-    
-    } catch (error) {
+        }
+        else{
+            res.status(404).json({
+                message:"User not found!"
+            })
+        }
+    }catch (error) {
         res.status(400).json({
             message: error.message
         })
