@@ -1,7 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import User from "../../models/User.js";
 import Message from "../../models/Message.js";
-import { getChatPartners } from "../controllers/MessagesController/getallcontacts.js";
 
 export const getallContacts_ = expressAsyncHandler(async(currentUserId) =>{
     return await User.find({
@@ -18,8 +17,23 @@ export const getchatPartners_ = expressAsyncHandler(async(myId) => {
     }).lean();
 
     const partnerIds = new Set();
-    allFriends.forEach({
-        if(Message.)
+    allFriends.forEach((msg) =>{
+        if(msg.senderId.toString() !== myId){
+                partnerIds.add(msg.senderId.toString());
+        }else{
+            partnerIds.add(msg.receiverId.toString());
+        }
     })
+
+    if(partnerIds.size === 0) return [];
+
+    const allMyFriends = await User.find({
+        _id:  {
+            $in :Array.from(partnerIds)
+        }
+    }).select("email username profilePic createdAt ").lean();
+
+    return allMyFriends;
+
 
 });
