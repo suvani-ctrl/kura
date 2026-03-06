@@ -1,9 +1,10 @@
-import { getchatPartners_ } from "../../repositories/Message.repo"
+import { getchatPartners_ } from "../../repositories/Message.repo.js"
 
 export const getChatPartners = async(req,res) =>{
     
     try {
-        const myChatPartners = await getchatPartners_(req.user._id);
+        const userId = req.user._id.toString();
+        const myChatPartners = await getchatPartners_(userId);
         res.status(200).json(myChatPartners);
     } catch (error) {
         console.error(error)
@@ -11,7 +12,4 @@ export const getChatPartners = async(req,res) =>{
             "message": "Internal Server Error"
         })
     }
-
-    
-
 }

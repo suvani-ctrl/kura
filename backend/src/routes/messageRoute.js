@@ -4,6 +4,7 @@ import { bruteforceLimitor, IPrateLimitor } from "../middleware/ratelimitmiddleW
 import securityRoute from "../middleware/auth.middleware.js";
 // import {upload} from "../controllers/MessagesController/getallcontacts.js"
 import { getAllContactsController } from "../controllers/MessagesController/getAllContact.js";
+import { getChatPartners } from "../controllers/MessagesController/getallcontacts.js";
 const router = express.Router();
 
 // router.use(IPrateLimitor,bruteforceLimitor)
