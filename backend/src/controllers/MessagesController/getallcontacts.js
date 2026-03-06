@@ -79,24 +79,24 @@ export const upload = multer({
     }
 }); 
 
-export const getallContact = async (req, res) => {
-    try {
-        const contacts = await User.find({
-            _id: { $ne: req.user._id }
-        })
-            .select("-password")
-            .lean();
+//  const getallContact = async (req, res) => {
+//     try {
+//         const contacts = await User.find({
+//             _id: { $ne: req.user._id }
+//         })
+//             .select("-password")
+//             .lean();
 
-        return res.status(200).json({
-            all_contacts: contacts
-        });
-    } catch (error) {
-        console.log("error in get all contacts", error);
-        res.status(500).json({
-            message: "server error"
-        });
-    }
-};
+//         return res.status(200).json({
+//             all_contacts: contacts
+//         });
+//     } catch (error) {
+//         console.log("error in get all contacts", error);
+//         res.status(500).json({
+//             message: "server error"
+//         });
+//     }
+// };
 
 
 
