@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/contacts",securityRoute,getAllContactsController);
 
-// router.get("/chats",securityRoute, getChatPartners)
+router.get("/chats",securityRoute, getChatPartners)
 
 // router.get("/chat/:id",securityRoute,getsingleChat);
 
