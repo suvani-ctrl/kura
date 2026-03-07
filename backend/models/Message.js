@@ -14,12 +14,15 @@ const messageSchema = new mongoose.Schema({
     },
     text:{
         type:String,
+        default:undefined
     },
     image:{
         type:String,
+        default:undefined
     },
     file:{
         type:String,
+        default: undefined
     },
     isRead: { type: Boolean, default: false },
     deleted: { type: Boolean, default: false },
