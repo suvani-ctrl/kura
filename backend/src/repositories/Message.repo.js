@@ -42,17 +42,14 @@ export const getchatPartners_ = expressAsyncHandler(async(myId) => {
 export const getsingleChat_ = expressAsyncHandler(async(myId1,myfriendsId2) =>{
         console.log("Hi this is my id",myId1.toString());
         console.log("Hii this is my friends id",myfriendsId2.toString());
-       await Message.updateMany({
-        $or : [
-            {senderId: myId1.toString()},
-            {receiverId:myfriendsId2.toString(),
-             isRead:false
-            },
+        await Message.updateMany(
             {
-                $set:{isRead: true}
-            }
-        ]
-    });
+                senderId: myfriendsId2.toString(),
+                receiverId: myId1.toString(),
+                isRead: false
+            },
+            {$set:{isRead: true}}
+    );
     const finalMessages = await Message.find({
         $or:
             [{senderId: myId1.toString(), receiverId: myfriendsId2.toString()},
@@ -61,8 +58,6 @@ export const getsingleChat_ = expressAsyncHandler(async(myId1,myfriendsId2) =>{
         
     }).sort({createdAt:-1}).lean();
 
-    return res.status(200).json({
-        finalMessages
-    })
+    return finalMessages;
 
 });
