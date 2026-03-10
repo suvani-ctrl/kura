@@ -95,22 +95,17 @@ export const chatStore = create((set, get) => ({
     
     const temp_id = `temp-${Date.now()}`;
     
-    // ✅ Check if attachment exists (can be File object or base64 string)
     const hasAttachment = !!messageData.attachment;
     const isAttachmentObject = hasAttachment && typeof messageData.attachment === "object" && messageData.attachment.rawFile;
     const isAttachmentString = hasAttachment && typeof messageData.attachment === "string";
     
-    // Determine if it's an image
     let isImage = false;
     let fileToUpload = null;
     
     if (isAttachmentObject) {
-        // File object from file input
         fileToUpload = messageData.attachment.rawFile;
         isImage = fileToUpload.type?.startsWith('image/');
     } else if (isAttachmentString) {
-        // Base64 string from image input or camera
-        // Convert base64 to Blob/File
         try {
             const base64Data = messageData.attachment;
             const response = await fetch(base64Data);
@@ -127,7 +122,7 @@ export const chatStore = create((set, get) => ({
         }
     }
     
-    const optimisticMessage = {
+    const eMsg = {
         _id: temp_id,
         senderId: authUser._id,
         receiverId: selectedUser._id,
@@ -137,7 +132,7 @@ export const chatStore = create((set, get) => ({
         createdAt: new Date().toISOString(),
     };
     
-    set({messages: [...messages, optimisticMessage]});
+    set({messages: [...messages, eMsg]});
     
     try {
         let response;

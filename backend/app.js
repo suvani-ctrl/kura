@@ -11,6 +11,7 @@ import { initializeSocketServer } from "./socket/socketServer.js";
 
 const PORT = ENV.PORT || 5000;
 const app = express();
+
 const allowedOrigins = [
     "http://localhost:5173",
     ENV.CLIENT_URL
@@ -38,8 +39,6 @@ app.use(express.static("public"));
 app.use(cookieParser()); 
 
 app.use("/api/v1/auth", authRoute);
-
-
 app.use("/api/v1/messages", messageRoute);
 
 const startServer = async () => {

@@ -4,12 +4,12 @@ import {Server as SocketIOServer} from 'socket.io'
 import { ENV } from '../src/lib/env.js'
 import cors from 'cors'
 
+
 const allowedOrigins = [
   'http://localhost:5173',
   ENV.CLIENT_URL
 ].filter(Boolean);
 
-  
 export function initializeSocketServer(server){
 
   const io = new SocketIOServer(server,{
@@ -18,7 +18,7 @@ export function initializeSocketServer(server){
     if (!origin || allowedOrigins.includes(origin)){
       callback(null,true)
     }else{
-      callback(new Error('Not allowed by CORS..'))
+      callback(new Error('Blocked By CORS..!!!'))
     }
   },
   method: ['GET','POST'],
@@ -26,8 +26,6 @@ export function initializeSocketServer(server){
 }
 }
 )
-}
+} 
 
-
-
-const app = express()
+const app = express();
