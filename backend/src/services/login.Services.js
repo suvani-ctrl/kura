@@ -1,4 +1,5 @@
 import User from "../../models/User.js";
+import { redisClient } from "../../redis/testRedis.js";
 import { comparePassword } from "../utils/comparePassword.js";
 import { authCookieOptions, generateToken } from "../utils/jwt.util.js";
 import { mySessionId } from "../utils/session.util.js";
@@ -14,7 +15,7 @@ export const userLogin = async(userData) =>{
     const user = await User.findOne({
         $or: [{email},{username}]
     }).select("+password");
-    
+ 
     if (!user){
         throw new Error("Invalid email or password");
     }
@@ -25,7 +26,7 @@ export const userLogin = async(userData) =>{
     }
  
     const sessionToken = await mySessionId();
-
+    redisClient.set(sessionToken,user._id);
     return {
         user,
         sessionToken
