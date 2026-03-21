@@ -1,7 +1,7 @@
 import { createClient } from "redis";
 
 
-export const client = createClient();
+export const redisClient = createClient();
 client.on('error', err =>{
     console.log('Redis client error', err);
 })

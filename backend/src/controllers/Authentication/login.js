@@ -1,3 +1,4 @@
+import { redisClient } from "../../../redis/testRedis.js";
 import { userLogin } from "../../services/login.Services.js";
 import { authCookieOptions } from "../../utils/jwt.util.js";
 import { mySessionId } from "../../utils/session.util.js";
@@ -7,15 +8,18 @@ export const login = async (req, res) => {
 
         const {username,email,password} = req.body;
         const {user} = await userLogin({username,email,password});
+        const userId = user._id;
         res.cookie(
             "sessionId",sessionToken,
             authCookieOptions
         )
+        redisClient.set(mySessionId,userId);
         if(user){
         res.status(200).json({
             message: "Login Success",
             user:user
         })
+    
         }
         else{
             res.status(404).json({
