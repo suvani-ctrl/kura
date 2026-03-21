@@ -10,7 +10,7 @@ export const authCookieOptions = {
 };
 
 
-export const mySessionId = () =>{
+export const mySessionId = async() =>{
     const sessionId = crypto.randomBytes(16).toString('hex');
     return sessionId;
 }

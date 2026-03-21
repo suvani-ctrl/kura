@@ -8,7 +8,7 @@ export const login = async (req, res) => {
         const {username,email,password} = req.body;
         const {user} = await userLogin({username,email,password});
         res.cookie(
-            "sessionId":mySessionId,
+            "sessionId",sessionToken,
             authCookieOptions
         )
         if(user){

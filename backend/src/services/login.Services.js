@@ -1,6 +1,7 @@
 import User from "../../models/User.js";
 import { comparePassword } from "../utils/comparePassword.js";
 import { authCookieOptions, generateToken } from "../utils/jwt.util.js";
+import { mySessionId } from "../utils/session.util.js";
 
 export const userLogin = async(userData) =>{
     try{
@@ -23,7 +24,7 @@ export const userLogin = async(userData) =>{
         throw new Error("Invalid email or password");
     }
  
-    const sessionToken = await mysessionToken();
+    const sessionToken = await mySessionId();
 
     return {
         user,
