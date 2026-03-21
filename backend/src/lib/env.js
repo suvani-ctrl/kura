@@ -31,4 +31,5 @@ export const ENV = {
 
   // socket
   SOCKET_CONNECTION_PORT: process.env.SOCKET_CONNECTION_PORT || 9000,
+  SESSION_SECRET: process.env.session_secret
 };

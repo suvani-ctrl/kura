@@ -20,6 +20,7 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
+    "express-session": "^1.19.0",
     "ioredis": "^5.8.2",
     "isomorphic-fetch": "^3.0.0",
     "joi": "^18.0.1",

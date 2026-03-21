@@ -8,7 +8,6 @@ import authRoute from "./src/routes/authRoute.js";
 import messageRoute from "./src/routes/messageRoute.js";
 import morgan from "morgan";
 import { initializeSocketServer } from "./socket/socketServer.js";
-
 const PORT = ENV.PORT || 5000;
 const app = express();
 
@@ -28,12 +27,25 @@ const corsOptions = {
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 };
+
+//session
+app.set('trust proxy', 1)
+
+//session
+app.use(mySession());
 app.use(morgan("dev"))
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+app.use(express.urlencoded({ 
+     limit: '1mb',
+     extended: true,
+     inflate:true,
+     parameterLimit: 5000,
+     type: 'application/x-www-form-urlencoded'
+    }));
 
 app.use(express.static("public")); 
 app.use(cookieParser()); 
