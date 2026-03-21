@@ -22,12 +22,12 @@ export const userLogin = async(userData) =>{
     if(checkPass != true){
         throw new Error("Invalid email or password");
     }
-
-    const token = generateToken({ userId: user._id, role: user.role });
+ 
+    const sessionToken = await mysessionToken();
 
     return {
         user,
-        token
+        sessionToken
     };
 }
 catch(error){
