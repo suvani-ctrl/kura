@@ -1,5 +1,5 @@
 import { registerUser } from "../../services/user.Services.js";
-import { authCookieOptions } from "../../utils/jwt.util.js";
+import { authCookieOptions } from "../../utils/session.util.js";
 
 export const signup  = async (req, res) => {
   try {

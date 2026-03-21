@@ -1,4 +1,5 @@
-import { authCookieOptions } from "../../utils/jwt.util.js";
+import { authCookieOptions } from "../../utils/session.util.js";
+
 
 export const logout = async (req, res) => {
     try {

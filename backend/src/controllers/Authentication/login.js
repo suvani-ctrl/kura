@@ -1,5 +1,5 @@
 import { userLogin } from "../../services/login.Services.js";
-import { authCookieOptions } from "../../utils/jwt.util.js";
+import { authCookieOptions } from "../../utils/session.util.js";
 
 export const login = async (req, res) => {
     try {

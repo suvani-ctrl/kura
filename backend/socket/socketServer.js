@@ -9,7 +9,7 @@ const allowedOrigin = [
 ENV.CLIENT_URL
 ].filter(Boolean);
 
-export const initializeSocketServer(server){
+export const initializeSocketServer = async(server) =>{
   const io = new SocketIOServer(server,{
     cors:{
       origin:(origin,callback) =>{
@@ -25,4 +25,3 @@ export const initializeSocketServer(server){
   })
 }
 
-const app = express();

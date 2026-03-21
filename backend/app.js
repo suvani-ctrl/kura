@@ -6,9 +6,8 @@ import { connectDB } from "./src/lib/db.js";
 import { ENV } from "./src/lib/env.js";
 import authRoute from "./src/routes/authRoute.js";
 import messageRoute from "./src/routes/messageRoute.js";
-import morgan, { token } from "morgan";
+import morgan from "morgan";
 import { initializeSocketServer } from "./socket/socketServer.js";
-import session from 'express-session';
 const PORT = ENV.PORT || 5000;
 const app = express();
 
