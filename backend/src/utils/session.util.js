@@ -10,7 +10,7 @@ export const authCookieOptions = {
 };
 
 
-export const mysessionToken = () =>{
-    const token = Math.floor(Math.random()*10000000).toString;
-
+export const mySessionId = () =>{
+    const sessionId = crypto.randomBytes(16).toString('hex');
+    return sessionId;
 }
