@@ -11,7 +11,7 @@ export const deleteSessionId = async(req,res) =>{
     }
     catch(error){
         res.status(500).json({
-            message: "Deleted all the cookie"
+            message: "Server Error"
         })
     }
     }
