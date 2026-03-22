@@ -4,7 +4,6 @@ import { cleanEmail } from "../utils/email.util.js";
 import { emailExists } from "../repositories/email.repo.js";
 import { isValidEmail } from "../utils/email.util.js";
 import sendWelcomeEmail from "../email/mailTrap.js";
-import { generateToken } from "../utils/jwt.util.js";
 
 export const registerUser = async(userData) =>{
       try {
