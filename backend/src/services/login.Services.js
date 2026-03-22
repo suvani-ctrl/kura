@@ -1,7 +1,6 @@
 import User from "../../models/User.js";
 import { redisClient } from "../../redis/testRedis.js";
 import { comparePassword } from "../utils/comparePassword.js";
-import { authCookieOptions, generateToken } from "../utils/jwt.util.js";
 import { mySessionId } from "../utils/session.util.js";
 
 export const userLogin = async(userData) =>{
@@ -26,7 +25,8 @@ export const userLogin = async(userData) =>{
     }
  
     const sessionToken = await mySessionId();
-    redisClient.set(sessionToken,user._id);
+    const userId = user._id.toString();
+    redisClient.set(sessionToken,userId);
     return {
         user,
         sessionToken

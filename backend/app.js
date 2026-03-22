@@ -8,6 +8,7 @@ import authRoute from "./src/routes/authRoute.js";
 import messageRoute from "./src/routes/messageRoute.js";
 import morgan from "morgan";
 import { initializeSocketServer } from "./socket/socketServer.js";
+import { mySessionId } from "./src/utils/session.util.js";
 const PORT = ENV.PORT || 5000;
 const app = express();
 
@@ -32,7 +33,6 @@ const corsOptions = {
 app.set('trust proxy', 1)
 
 //session
-app.use(mySession());
 app.use(morgan("dev"))
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));

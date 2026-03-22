@@ -1,4 +1,3 @@
-import User from "../../../models/User.js";
 
 export const checkAuth = async (req, res) => {
     try {
