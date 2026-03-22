@@ -1,9 +1,9 @@
 import { redisClient } from "../../../redis/testRedis.js";
 
-export const deleteSessionId = (req,res) =>{
+export const deleteSessionId = async(req,res) =>{
     const sessionId = req.cookies?.sessionId;
     try{
-        redisClient.del(sessionId);
+        await redisClient.del(sessionId);
         res.clearCookie('sessionId');
     }
     catch(error){
