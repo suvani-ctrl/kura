@@ -28,7 +28,7 @@ export const ENV = {
   REDIS_PORT: process.env.REDIS_PORT,
   REDIS_HOST: process.env.REDIS_HOST,
   REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-  SESSION_EXPIRY: process.env.SESSION_EXPIRY
+  SESSION_EXPIRY: process.env.SESSION_EXPIRY,
 
   // socket
   SOCKET_CONNECTION_PORT: process.env.SOCKET_CONNECTION_PORT || 9000,

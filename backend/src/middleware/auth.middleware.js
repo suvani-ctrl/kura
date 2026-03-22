@@ -3,16 +3,17 @@ import { redisClient } from "../../redis/testRedis.js";
 
 const securityRoute = async (req, res, next) => {
     try {
-        const token = req.cookies?.sessionId;
-        const redisUserId = redisClient.get(sessionId);
-        console.log(token)
-        console.log(redisUserId)
-        if (!token) {
+        const sessionId = req.cookies?.sessionId;
+        if (!sessionId) {
             return res.status(401).json({
                 message: "Unauthorized - No token has been provided"
 
             });
         }
+        const redisUserId = await redisClient.get(sessionId);
+        console.log(sessionId)
+        console.log(redisUserId)
+     
 
 
         const user = await User.findById(redisUserId).select("-password");
