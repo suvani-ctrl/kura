@@ -1,13 +1,17 @@
-import { authCookieOptions } from "../../utils/session.util.js";
+import { redisClient } from "../../../redis/testRedis.js";
 
-
-export const logout = async (req, res) => {
-    try {
-        res.clearCookie("token", authCookieOptions);
-        
-        return res.status(200).json({ message: "Logged out successfully" });
-    } catch (error) {
-        console.error("Logout error:", error);
-        return res.status(500).json({ message: "Server error" });
+export const logout = async(req,res) =>{
+    const sessionId = req.cookies?.sessionId;
+    try{
+        await redisClient.del(sessionId);
+        res.clearCookie('sessionId');
+        res.status(200).json({
+            message: "Logged out successfuly"
+        })
     }
-};
+    catch(error){
+        res.status(500).json({
+            message: "Server error"
+        })
+    }
+    }

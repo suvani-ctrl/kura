@@ -1,5 +1,6 @@
 import User from "../../models/User.js";
 import { redisClient } from "../../redis/testRedis.js";
+import { ENV } from "../lib/env.js";
 import { comparePassword } from "../utils/comparePassword.js";
 import { mySessionId } from "../utils/session.util.js";
 
@@ -26,7 +27,7 @@ export const userLogin = async(userData) =>{
  
     const sessionToken = await mySessionId();
     const userId = user._id.toString();
-    redisClient.set(sessionToken,userId);
+    redisClient.set(sessionToken,userId,{EX:ENV.SESSION_EXPIRY});
     return {
         user,
         sessionToken

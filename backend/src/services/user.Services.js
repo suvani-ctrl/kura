@@ -4,6 +4,9 @@ import { cleanEmail } from "../utils/email.util.js";
 import { emailExists } from "../repositories/email.repo.js";
 import { isValidEmail } from "../utils/email.util.js";
 import sendWelcomeEmail from "../email/mailTrap.js";
+import { mySessionId } from "../utils/session.util.js";
+import { redisClient } from "../../redis/testRedis.js";
+
 
 export const registerUser = async(userData) =>{
       try {
@@ -16,6 +19,7 @@ export const registerUser = async(userData) =>{
     
             const clean_user = username.trim();
             const clean_email = cleanEmail(email); 
+
 
             if(!isValidEmail(clean_email)){
                 throw new Error("Email field error");
@@ -42,8 +46,6 @@ export const registerUser = async(userData) =>{
             } catch (error) {
                 console.error("Email sending failed:", error);
             }
-
-            const jwtToken = generateToken({userId: newUser._id, role: newUser.role });
             
             const data = ({
                 user: {
@@ -53,11 +55,14 @@ export const registerUser = async(userData) =>{
                 }
             })
 
+            const sessionId = await mySessionId();
+            
+            await redisClient.set(sessionId,newUser._id.toString());
+
             return (
                 {
                     ...data,
-                    token:jwtToken
-                }
+                    sessionId                }
                 
             )
     
