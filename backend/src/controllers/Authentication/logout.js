@@ -1,6 +1,6 @@
 import { redisClient } from "../../../redis/testRedis.js";
 
-export const deleteSessionId = async(req,res) =>{
+export const logout = async(req,res) =>{
     const sessionId = req.cookies?.sessionId;
     try{
         await redisClient.del(sessionId);
@@ -11,7 +11,7 @@ export const deleteSessionId = async(req,res) =>{
     }
     catch(error){
         res.status(500).json({
-            message: "Server Error"
+            message: "Server error"
         })
     }
     }
