@@ -1,6 +1,4 @@
-import jwt from "jsonwebtoken";
 import User from "../../models/User.js";
-import { ENV } from "../lib/env.js";
 
 const securityRoute = async (req, res, next) => {
     try {
@@ -13,13 +11,6 @@ const securityRoute = async (req, res, next) => {
             });
         }
 
-        const decoded = jwt.verify(token, ENV.JWT_SECRET);
-        console.log("Decoded payload :",decoded);
-        if (!decoded) {
-            return res.status(401).json({
-                message: "Unauthorized - Invalid token"
-            });
-        }
 
         const user = await User.findById(decoded.userId).select("-password");
         

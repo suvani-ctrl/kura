@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt"
 import zxcvbn from 'zxcvbn';
 import isPwned from '../lib/security.js';
-import { ENV } from '../lib/env.js';
 
 
 const checkPasswordSecurity = async (req, res, next) => {

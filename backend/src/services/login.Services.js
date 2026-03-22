@@ -26,7 +26,7 @@ export const userLogin = async(userData) =>{
  
     const sessionToken = await mySessionId();
     const userId = user._id.toString();
-    redisClient.set(sessionToken,userId);
+    redisClient.set(sessionToken,userId,{EX:3600});
     return {
         user,
         sessionToken

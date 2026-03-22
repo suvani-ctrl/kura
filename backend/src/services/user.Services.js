@@ -43,7 +43,7 @@ export const registerUser = async(userData) =>{
                 console.error("Email sending failed:", error);
             }
 
-            const jwtToken = generateToken({userId: newUser._id, role: newUser.role });
+            // const jwtToken = generateToken({userId: newUser._id, role: newUser.role });
             
             const data = ({
                 user: {
