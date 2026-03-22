@@ -5,7 +5,7 @@ export const signup  = async (req, res) => {
   try {
 
         const newUser = await registerUser(req.body);
-        res.cookie('token',newUser.token,authCookieOptions);
+        res.cookie('sessionId',newUser.sessionId,authCookieOptions);
         res.status(201).json(newUser);
     
   } catch (error) {

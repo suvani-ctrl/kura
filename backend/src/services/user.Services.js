@@ -57,7 +57,7 @@ export const registerUser = async(userData) =>{
 
             const sessionId = await mySessionId();
             
-            redisClient.set(sessionId,newUser._id);
+            await redisClient.set(sessionId,newUser._id.toString());
 
             return (
                 {
