@@ -5,9 +5,12 @@ export const deleteSessionId = async(req,res) =>{
     try{
         await redisClient.del(sessionId);
         res.clearCookie('sessionId');
+        res.status(200).json({
+            message: "Logged out successfuly"
+        })
     }
     catch(error){
-        res.status(200).json({
+        res.status(500).json({
             message: "Deleted all the cookie"
         })
     }
